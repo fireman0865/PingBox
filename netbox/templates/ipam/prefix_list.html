@@ -1,0 +1,9 @@
+{% extends 'utilities/obj_list.html' %}
+{% load helpers %}
+
+{% block buttons %}
+    <div class="btn-group" role="group">
+        <a href="{% url 'ipam:prefix_list' %}{% querystring request expand=None page=1 %}" class="btn btn-default{% if not request.GET.expand %} active{% endif %}">Collapse</a>
+        <a href="{% url 'ipam:prefix_list' %}{% querystring request expand='on' page=1 %}" class="btn btn-default{% if request.GET.expand %} active{% endif %}">Expand</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends '_base.html' %}
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load static %}
+
+{% block header %}
+    <div class="row noprint">
+        <div class="col-sm-8 col-md-9">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'dcim:powerpanel_list' %}">Power Panels</a></li>
+                <li><a href="{{ powerpanel.site.get_absolute_url }}">{{ powerpanel.site }}</a></li>
+                {% if powerpanel.rack_group %}
+                    <li><a href="{{ powerpanel.rack_group.get_absolute_url }}">{{ powerpanel.rack_group }}</a></li>
+                {% endif %}
+                <li>{{ powerpanel }}</li>
+            </ol>
+        </div>
+        <div class="col-sm-4 col-md-3">
+            <form action="{% url 'dcim:powerpanel_list' %}" method="get">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search power panels" />
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="fa fa-search" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="pull-right noprint">
+        {% if perms.dcim.change_powerpanel %}
+            {% edit_button powerpanel %}
+        {% endif %}
+        {% if perms.dcim.delete_powerpanel %}
+            {% delete_button powerpanel %}
+        {% endif %}
+    </div>
+    <h1>{% block title %}{{ powerpanel }}{% endblock %}</h1>
+    {% include 'inc/created_updated.html' with obj=powerpanel %}
+    <div class="pull-right noprint">
+        {% custom_links powerpanel %}
+    </div>
+    <ul class="nav nav-tabs">
+        <li role="presentation"{% if not active_tab %} class="active"{% endif %}>
+            <a href="{{ powerpanel.get_absolute_url }}">Cable</a>
+        </li>
+        {% if perms.extras.view_objectchange %}
+            <li role="presentation"{% if active_tab == 'changelog' %} class="active"{% endif %}>
+                <a href="{% url 'dcim:powerpanel_changelog' pk=powerpanel.pk %}">Change Log</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Power Panel</strong>
+            </div>
+            <table class="table table-hover panel-body attr-table">
+                <tr>
+                    <td>Site</td>
+                    <td>
+                        <a href="{{ powerpanel.site.get_absolute_url }}">{{ powerpanel.site }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Rack Group</td>
+                    <td>
+                        {% if powerpanel.rack_group %}
+                            <a href="{{ powerpanel.rack_group.get_absolute_url }}">{{ powerpanel.rack_group }}</a>
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+	<div class="col-md-9">
+        {% include 'panel_table.html' with table=powerfeed_table heading='Connected Feeds' %}
+    </div>
+</div>
+{% endblock %}
